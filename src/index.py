@@ -1,3 +1,4 @@
+# Paikallinen muutos Git-harjoitusta varten
 from varasto import Varasto
 
 
