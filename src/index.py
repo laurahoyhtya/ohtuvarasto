@@ -2,19 +2,20 @@
 from varasto import Varasto
 
 
-def main():
-    mehua = Varasto(100.0)
-    olutta = Varasto(100.0, 20.2)
-
+def nayta_alkutilanne(mehua, olutta):
     print("Luonnin jälkeen:")
     print(f"Mehuvarasto: {mehua}")
     print(f"Olutvarasto: {olutta}")
 
+
+def nayta_oluen_tiedot(olutta):
     print("Olut getterit:")
     print(f"saldo = {olutta.saldo}")
     print(f"tilavuus = {olutta.tilavuus}")
     print(f"paljonko_mahtuu = {olutta.paljonko_mahtuu()}")
 
+
+def kokeile_mehua(mehua):
     print("Mehu setterit:")
     print("Lisätään 50.7")
     mehua.lisaa_varastoon(50.7)
@@ -23,6 +24,8 @@ def main():
     mehua.ota_varastosta(3.14)
     print(f"Mehuvarasto: {mehua}")
 
+
+def nayta_virhetilanteet():
     print("Virhetilanteita:")
     print("Varasto(-100.0);")
     huono = Varasto(-100.0)
@@ -32,27 +35,52 @@ def main():
     huono = Varasto(100.0, -50.7)
     print(huono)
 
+
+def kokeile_olutta(olutta):
     print(f"Olutvarasto: {olutta}")
     print("olutta.lisaa_varastoon(1000.0)")
     olutta.lisaa_varastoon(1000.0)
     print(f"Olutvarasto: {olutta}")
 
+
+def kokeile_negatiivista_lisaamista(mehua):
     print(f"Mehuvarasto: {mehua}")
     print("mehua.lisaa_varastoon(-666.0)")
     mehua.lisaa_varastoon(-666.0)
     print(f"Mehuvarasto: {mehua}")
 
+
+def kokeile_oluen_tyhjentamista(olutta):
     print(f"Olutvarasto: {olutta}")
     print("olutta.ota_varastosta(1000.0)")
     saatiin = olutta.ota_varastosta(1000.0)
     print(f"saatiin {saatiin}")
     print(f"Olutvarasto: {olutta}")
 
+
+def kokeile_negatiivista_ottoa(mehua):
     print(f"Mehuvarasto: {mehua}")
     print("mehua.otaVarastosta(-32.9)")
     saatiin = mehua.ota_varastosta(-32.9)
     print(f"saatiin {saatiin}")
     print(f"Mehuvarasto: {mehua}")
+
+
+def esittele_varastoja(mehua, olutta):
+    nayta_alkutilanne(mehua, olutta)
+    nayta_oluen_tiedot(olutta)
+    kokeile_mehua(mehua)
+    nayta_virhetilanteet()
+    kokeile_olutta(olutta)
+    kokeile_negatiivista_lisaamista(mehua)
+    kokeile_oluen_tyhjentamista(olutta)
+    kokeile_negatiivista_ottoa(mehua)
+
+
+def main():
+    mehua = Varasto(100.0)
+    olutta = Varasto(100.0, 20.2)
+    esittele_varastoja(mehua, olutta)
 
 
 if __name__ == "__main__":
