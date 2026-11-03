@@ -43,3 +43,19 @@ class Varasto:
 
     def __str__(self):
         return f"saldo = {self.saldo}, vielä tilaa {self.paljonko_mahtuu()}"
+
+
+def lint_saantoesimerkki(ensimmainen, toinen, kolmas, neljas, viides, kuudes):
+  if ensimmainen:
+    for arvo in toinen:
+      if kolmas:
+        tulos = neljas
+        tulos = tulos + viides
+        tulos = tulos + kuudes
+        tulos = tulos + arvo
+        tulos = tulos + arvo
+        tulos = tulos + arvo
+        tulos = tulos + arvo
+        tulos = tulos + arvo
+        return tulos
+  return None
