@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ohtuvarasto</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: #172033;
+        background: #edf3f8;
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; }
+      .page {
+        width: min(960px, calc(100% - 2rem));
+        margin: 2rem auto;
+      }
+      h1, h2, h3 { color: #172033; }
+      h1 { margin-top: 0; }
+      .create-panel, .warehouse-card {
+        background: #ffffff;
+        border: 1px solid #d8e2ec;
+        border-radius: 12px;
+        box-shadow: 0 4px 14px rgba(42, 76, 112, 0.08);
+      }
+      .create-panel {
+        display: grid;
+        grid-template-columns: 1fr 1fr auto;
+        align-items: end;
+        gap: 1rem;
+        padding: 1.25rem;
+        margin-bottom: 1.5rem;
+      }
+      label {
+        display: grid;
+        gap: 0.4rem;
+        color: #40516a;
+        font-weight: 700;
+      }
+      input {
+        width: 100%;
+        min-height: 42px;
+        border: 1px solid #9badbf;
+        border-radius: 7px;
+        padding: 0.55rem 0.7rem;
+        background: #fff;
+        color: #172033;
+      }
+      button {
+        min-height: 42px;
+        border: 0;
+        border-radius: 7px;
+        padding: 0.55rem 1rem;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      button:focus-visible, input:focus-visible {
+        outline: 3px solid #2563eb;
+        outline-offset: 3px;
+      }
+      .messages {
+        display: grid;
+        gap: 0.65rem;
+        margin: 0 0 1.25rem;
+        padding: 0;
+        list-style: none;
+      }
+      .flash {
+        border-radius: 8px;
+        padding: 0.8rem 1rem;
+        border: 1px solid;
+      }
+      .flash-success {
+        color: #14532d;
+        background: #dcfce7;
+        border-color: #86efac;
+      }
+      .flash-error {
+        color: #7f1d1d;
+        background: #fee2e2;
+        border-color: #fca5a5;
+      }
+      .warehouse-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+      }
+      .warehouse-card { padding: 1.25rem; }
+      .warehouse-card h3 { margin-top: 0; }
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.65rem;
+        margin-bottom: 1rem;
+      }
+      .stat {
+        border-radius: 8px;
+        background: #f4f7fa;
+        padding: 0.75rem;
+      }
+      .stat dt {
+        color: #607188;
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+      .stat dd {
+        margin: 0.25rem 0 0;
+        font-size: 1.35rem;
+        font-weight: 800;
+      }
+      .stock-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.75rem;
+      }
+      .stock-form {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: end;
+        gap: 0.65rem;
+        border-radius: 8px;
+        padding: 0.75rem;
+      }
+      .stock-form-add {
+        background: #ecfdf5;
+        border: 1px solid #a7f3d0;
+      }
+      .stock-form-remove {
+        background: #fff7ed;
+        border: 1px solid #fed7aa;
+      }
+      .stock-form-add button { background: #15803d; color: #fff; }
+      .stock-form-remove button { background: #c2410c; color: #fff; }
+      .empty {
+        padding: 1.25rem;
+        border: 1px dashed #9badbf;
+        border-radius: 8px;
+        background: #f8fafc;
+      }
+      @media (max-width: 700px) {
+        .page { width: min(960px, calc(100% - 1.25rem)); margin: 1.25rem auto; }
+        .create-panel, .warehouse-list, .stock-actions { grid-template-columns: 1fr; }
+        .stats { grid-template-columns: 1fr; }
+        .create-panel button { width: 100%; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <h1>Warehouses</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="messages" aria-live="polite">
+          {% for category, message in messages %}
+            <li class="flash flash-{{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <h2>Create a warehouse</h2>
+    <form class="create-panel" action="/warehouses" method="post">
+      <input type="hidden" name="action" value="create">
+      <label>Name <input type="text" name="name" required></label>
+      <label>Capacity <input type="number" name="capacity" min="1" step="1" required></label>
+      <button type="submit">Create</button>
+    </form>
+
+    <h2>Existing warehouses</h2>
+    {% if warehouses %}
+      <div class="warehouse-list">
+      {% for warehouse_id, warehouse in warehouses.items() %}
+        <section class="warehouse-card">
+          <h3>{{ warehouse.name }}</h3>
+          <dl class="stats">
+            <div class="stat">
+              <dt>Capacity</dt>
+              <dd>{{ warehouse.capacity }}</dd>
+            </div>
+            <div class="stat">
+              <dt>Current stock</dt>
+              <dd>{{ warehouse.stock }}</dd>
+            </div>
+            <div class="stat">
+              <dt>Remaining</dt>
+              <dd>{{ warehouse.remaining_capacity }}</dd>
+            </div>
+          </dl>
+
+          <div class="stock-actions">
+          <form class="stock-form stock-form-add" action="/warehouses/{{ warehouse_id }}/add" method="post">
+            <label>Quantity <input type="number" name="quantity" min="1" step="1" required></label>
+            <button type="submit">Add goods</button>
+          </form>
+
+          <form class="stock-form stock-form-remove" action="/warehouses/{{ warehouse_id }}/remove" method="post">
+            <label>Quantity <input type="number" name="quantity" min="1" step="1" required></label>
+            <button type="submit">Remove goods</button>
+          </form>
+          </div>
+        </section>
+      {% endfor %}
+      </div>
+    {% else %}
+      <p class="empty">No warehouses created yet.</p>
+    {% endif %}
+    </main>
+  </body>
+</html>
