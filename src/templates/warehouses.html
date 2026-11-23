@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Ohtuvarasto</title>
+  </head>
+  <body>
+    <h1>Warehouses</h1>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul>
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <h2>Create a warehouse</h2>
+    <form action="/warehouses" method="post">
+      <input type="hidden" name="action" value="create">
+      <label>Name <input type="text" name="name" required></label>
+      <label>Capacity <input type="number" name="capacity" min="1" step="1" required></label>
+      <button type="submit">Create</button>
+    </form>
+
+    <h2>Existing warehouses</h2>
+    {% if warehouses %}
+      {% for warehouse_id, warehouse in warehouses.items() %}
+        <section>
+          <h3>{{ warehouse.name }}</h3>
+          <p>Capacity: {{ warehouse.capacity }}</p>
+          <p>Current stock: {{ warehouse.stock }}</p>
+          <p>Remaining capacity: {{ warehouse.remaining_capacity }}</p>
+
+          <form action="/warehouses/{{ warehouse_id }}/add" method="post">
+            <label>Quantity <input type="number" name="quantity" min="1" step="1" required></label>
+            <button type="submit">Add goods</button>
+          </form>
+
+          <form action="/warehouses/{{ warehouse_id }}/remove" method="post">
+            <label>Quantity <input type="number" name="quantity" min="1" step="1" required></label>
+            <button type="submit">Remove goods</button>
+          </form>
+        </section>
+      {% endfor %}
+    {% else %}
+      <p>No warehouses created yet.</p>
+    {% endif %}
+  </body>
+</html>
