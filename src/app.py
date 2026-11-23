@@ -43,37 +43,46 @@ def create_app():
         name = request.form.get("name", "").strip()
         capacity = positive_whole_number(request.form.get("capacity"))
         if not name:
-            flash("Give the warehouse a name.")
+            flash("Give the warehouse a name.", "error")
         elif capacity is None:
-            flash("Capacity must be a positive whole number.")
+            flash("Capacity must be a positive whole number.", "error")
         else:
             warehouse_id = max(warehouses, default=0) + 1
             warehouses[warehouse_id] = Warehouse(name, capacity)
-            flash(f'Warehouse "{name}" created.')
+            flash(f'Warehouse "{name}" created.', "success")
 
     def adjust_goods(warehouse_id, action):
         warehouse = warehouses.get(warehouse_id)
         if warehouse is None:
-            flash("Select a valid warehouse.")
+            flash("Select a valid warehouse.", "error")
             return
 
         quantity = positive_whole_number(
             request.form.get("quantity") or request.form.get("amount")
         )
         if quantity is None:
-            flash("Quantity must be a positive whole number.")
+            flash("Quantity must be a positive whole number.", "error")
         elif action == "add":
             if quantity > warehouse.remaining_capacity:
-                flash("The goods do not fit in the remaining capacity.")
+                flash(
+                    "The goods do not fit in the remaining capacity.",
+                    "error",
+                )
             else:
                 warehouse.storage.lisaa_varastoon(quantity)
-                flash(f'Added {quantity} goods to "{warehouse.name}".')
+                flash(
+                    f'Added {quantity} goods to "{warehouse.name}".',
+                    "success",
+                )
         else:
             if quantity > warehouse.stock:
-                flash("Not enough goods in the warehouse.")
+                flash("Not enough goods in the warehouse.", "error")
             else:
                 warehouse.storage.ota_varastosta(quantity)
-                flash(f'Removed {quantity} goods from "{warehouse.name}".')
+                flash(
+                    f'Removed {quantity} goods from "{warehouse.name}".',
+                    "success",
+                )
 
     @flask_app.route("/", methods=["GET", "POST"])
     def index():
@@ -93,7 +102,7 @@ def create_app():
                 try:
                     warehouse_id = int(request.form.get("warehouse_id"))
                 except (TypeError, ValueError):
-                    flash("Select a valid warehouse.")
+                    flash("Select a valid warehouse.", "error")
                     return redirect("/")
                 adjust_goods(warehouse_id, action)
                 return redirect("/")

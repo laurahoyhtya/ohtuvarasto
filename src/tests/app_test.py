@@ -22,9 +22,11 @@ def test_create_and_list_warehouse():
 
     assert response.status_code == 200
     assert b"Main" in response.data
-    assert b"Capacity: 10" in response.data
-    assert b"Current stock: 0" in response.data
-    assert b"Remaining capacity: 10" in response.data
+    assert b"<dt>Capacity</dt>" in response.data
+    assert b"<dt>Current stock</dt>" in response.data
+    assert b"<dt>Remaining</dt>" in response.data
+    assert b"<dd>10</dd>" in response.data
+    assert b"<dd>0</dd>" in response.data
 
 
 def test_add_and_remove_goods():
@@ -39,14 +41,16 @@ def test_add_and_remove_goods():
         data={"quantity": "4"},
         follow_redirects=True,
     )
-    assert b"Current stock: 4" in response.data
+    assert b"<dt>Current stock</dt>" in response.data
+    assert b"<dd>4</dd>" in response.data
 
     response = client.post(
         "/warehouses/1/remove",
         data={"quantity": "3"},
         follow_redirects=True,
     )
-    assert b"Current stock: 1" in response.data
+    assert b"<dt>Current stock</dt>" in response.data
+    assert b"<dd>1</dd>" in response.data
 
 
 @pytest.mark.parametrize(
