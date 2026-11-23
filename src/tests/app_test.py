@@ -6,7 +6,6 @@ import app
 @pytest.fixture(autouse=True)
 def empty_warehouses():
     app.warehouses.clear()
-    app.next_warehouse_id = 1
     app.app.config["TESTING"] = True
     yield
     app.warehouses.clear()
